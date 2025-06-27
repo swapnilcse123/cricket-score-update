@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Manual Cricket Scoreboard with Over Details</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      text-align: center;
+      padding: 40px;
+    }
+    #scoreBoard {
+      background: #b3a7a796;
+      border-radius: 10px;
+      display: inline-block;
+      padding: 30px 50px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    h2 {
+      color: #333;
+    }
+    .score {
+    font-size: 28px;
+    color: #333333;
+    margin: 20px 0;
+}
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      margin: 5px;
+      border: none;
+      border-radius: 6px;
+      background-color: #3498db;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .reset-btn {
+      background-color: #e74c3c;
+    }
+    .reset-btn:hover {
+      background-color: #c0392b;
+    }
+    #overDetails {
+      margin-top: 25px;
+      text-align: left;
+      font-size: 16px;
+      max-width: 474px;
+      margin-left: auto;
+      margin-right: auto;
+      background: #928989ab;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="scoreBoard">
+    <h2>🏏 Manual Cricket Scoreboard</h2>
+    <div class="score" id="scoreText">Team A: 0/0 (0.0 ov)</div>
+
+    <!-- Run Buttons -->
+    <button onclick="addRuns(1)">+1</button>
+    <button onclick="addRuns(2)">+2</button>
+    <button onclick="addRuns(3)">+3</button>
+    <button onclick="addRuns(4)">+4</button>
+    <button onclick="addRuns(6)">+6</button>
+    <button onclick="addWicket()">Wicket</button><br><br>
+
+    <button class="reset-btn" onclick="resetScore()">Reset</button>
+  </div>
+
+  <!-- Over Details Section -->
+  <div id="overDetails">
+    <h3>Over Details:</h3>
+    <ul id="oversList"></ul>
+  </div>
+
+  <script>
+    let runs = 0;
+    let wickets = 0;
+    let overs = 0;
+    let balls = 0;
+
+    let currentOver = [];
+    let overHistory = [];
+
+    function updateDisplay() {
+      document.getElementById("scoreText").textContent =
+        `Team A: ${runs}/${wickets} (${overs}.${balls} ov)`;
+
+      // Display over history
+      const oversList = document.getElementById("oversList");
+      oversList.innerHTML = "";
+      overHistory.forEach((over, index) => {
+        let overStr = over.map(b => b).join(" ");
+        oversList.innerHTML += `<li><strong>Over ${index + 1}:</strong> ${overStr}</li>`;
+      });
+
+      // Current over (not yet complete)
+      if (currentOver.length > 0) {
+        let currentStr = currentOver.map(b => b).join(" ");
+        oversList.innerHTML += `<li><strong>Over ${overs + 1}:</strong> ${currentStr}</li>`;
+      }
+    }
+
+    function addRuns(value) {
+      if (wickets >= 10) return;
+
+      runs += value;
+      currentOver.push(value);
+      incrementBall();
+    }
+
+    function addWicket() {
+      if (wickets < 10) {
+        wickets++;
+        currentOver.push("W");
+        incrementBall();
+      }
+    }
+
+    function incrementBall() {
+      balls++;
+      if (balls === 6) {
+        balls = 0;
+        overs++;
+        overHistory.push(currentOver);
+        currentOver = [];
+      }
+      updateDisplay();
+    }
+
+    function resetScore() {
+      runs = 0;
+      wickets = 0;
+      overs = 0;
+      balls = 0;
+      currentOver = [];
+      overHistory = [];
+      updateDisplay();
+    }
+
+    updateDisplay();
+  </script>
+
+</body>
+</html>
